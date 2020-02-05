@@ -25,10 +25,13 @@ module.exports = class NewCommand extends Command {
     }
     
     run(message, { role }) {
+
+        //TODO - make this a class!
         var newStandup = {
             id: moment().unix(),
             guildID: message.guild.id,
-            members: []
+            members: [],
+            initialized: false
         };
 
         // We have custom logic to track optional role passed in 
@@ -56,10 +59,10 @@ module.exports = class NewCommand extends Command {
                     //Ask for when first should happen
                     this.getAskDatetime(dm)
                         .then(date => {
-                            newStandup.first = date;
+                            newStandup.next = date;
 
                             //Ask about when to report first results
-                            this.getReportDatetime(dm, newStandup.first)
+                            this.getReportDatetime(dm, newStandup.next)
                                 .then(date => {
                                     newStandup.report = date;
 

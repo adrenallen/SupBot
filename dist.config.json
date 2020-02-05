@@ -1,5 +1,6 @@
 {
     "bot_token": "",
     "bot_owner": "",
-    "storage_refresh_rate": 300000
+    "storage_refresh_rate": 300000,
+    "standup_check_frequency": 60000
 }

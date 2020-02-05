@@ -1,4 +1,5 @@
 const storage = require('node-persist');
+const moment = require ('moment');
 module.exports = class StandupHandler {
     constructor(){
         this.initStorage();
@@ -11,6 +12,10 @@ module.exports = class StandupHandler {
 
     getStandups(){
         return this.standups;
+    }
+
+    findDueStandups(){
+        return this.standups.filter(s => moment(s.next) < moment() && !s.initialized);
     }
 
     async refreshStandups(){
