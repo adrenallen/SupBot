@@ -1,6 +1,12 @@
 const { CommandoClient } = require('discord.js-commando');
 const path = require('path');
 const config = require('./config.json')
+const StandupHandler = require('./services/standupHandler');
+
+var sh = new StandupHandler();
+
+// Refresh standups in cache very so often
+setInterval(() => sh.refreshStandups, config.storage_refresh_rate);
 
 const client = new CommandoClient({
 	commandPrefix: '!',

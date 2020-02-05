@@ -2,6 +2,7 @@ const { Command } = require('discord.js-commando');
 const Occurrence = require('../../constants/occurrence');
 const DateFormats = require('../../constants/dateFormat');
 const moment = require ('moment');
+const StandupHandler = require('../../services/standupHandler');
 
 module.exports = class NewCommand extends Command {
 	constructor(client) {
@@ -19,11 +20,13 @@ module.exports = class NewCommand extends Command {
                     default: ''
                 }
             ]
-		});
+        });
+        this.sh = new StandupHandler();
     }
     
     run(message, { role }) {
         var newStandup = {
+            id: moment().unix(),
             guildID: message.guild.id,
             members: []
         };
@@ -56,7 +59,7 @@ module.exports = class NewCommand extends Command {
                             newStandup.first = date;
 
                             //Ask about when to report first results
-                            this.getReportDatetime(dm)
+                            this.getReportDatetime(dm, newStandup.first)
                                 .then(date => {
                                     newStandup.report = date;
 
@@ -64,6 +67,7 @@ module.exports = class NewCommand extends Command {
                                     this.getQuestions(dm)
                                         .then(questions => {
                                             newStandup.questions = questions;
+                                            this.sh.saveNewStandup(newStandup);
                                             dm.send("Okay! Your stand-up has been configured!  This can take up to 10 minutes to go into effect.");
                                         })
                                         .catch(console.error);
@@ -89,9 +93,22 @@ module.exports = class NewCommand extends Command {
                 .then(collected => {
                     var question = collected.first().content;
                     if(question.toLowerCase() == 'done'){
-                        resolve(questions);
+                        if(questions.length < 1){
+                            dm.send("You must have atleast one question!");
+
+                            //TODO - refactor this so it's DRY
+                            this.getNextQuestion(dm, questions)
+                                .then((questions) => { 
+                                    resolve(questions);
+                                })
+                                .catch(reject);
+                        }else{
+                            resolve(questions);
+                        }                        
                     }else{
                         questions.push(question);
+
+                        //TODO - refactor this so it's DRY
                         this.getNextQuestion(dm, questions)
                             .then((questions) => { 
                                 resolve(questions);
@@ -131,7 +148,7 @@ module.exports = class NewCommand extends Command {
         });
     }
 
-    getReportDatetime(dm) {
+    getReportDatetime(dm, askDate) {
         const DATE_FORMAT = DateFormats.PARSE_FORMAT;
         var nowFormat = moment().format(DATE_FORMAT);
         return new Promise((resolve, reject) => {
@@ -140,7 +157,12 @@ module.exports = class NewCommand extends Command {
                 if(m.author.id == this.client.user.id){
                     return false;
                 }
-                return moment.parseZone(m.content, DATE_FORMAT).isValid();
+
+                var date = moment.parseZone(m.content, DATE_FORMAT);
+                if(date <= askDate){
+                    dm.send(`The report date must happen after the ask date (${askDate})!`);
+                }
+                return date.isValid() && (date > askDate);
             }
             dm.awaitMessages(filter, {max: 1, time: 60000, errors: ['time']})
                 .then(collected => {
