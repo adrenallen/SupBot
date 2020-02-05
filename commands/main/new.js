@@ -13,17 +13,32 @@ module.exports = class NewCommand extends Command {
             description: 'Starts a new stand-up event setup',
             args: [
                 {
-                    key: 'group_channel',
-                    prompt: 'What group or channel would you like to include on this?',
+                    key: 'role',
+                    prompt: 'What role would you like to include on this?',
                     type: 'string',
+                    default: ''
                 }
             ]
 		});
     }
     
-    run(message, { group_channel }) {
-        var newStandup = {};
-        console.log(group_channel);
+    run(message, { role }) {
+        var newStandup = {
+            guildID: message.guild.id,
+            members: []
+        };
+
+        var roleID = role.match(/[0-9]+/g);
+        if(roleID != undefined && roleID.length > 0){
+            newStandup.members = message.guild.roles.get(roleID[0]).members
+                .keyArray()
+                .filter(m => m != this.client.user.id)
+        }else{
+            newStandup.members = message.guild.members
+                .keyArray()
+                .filter(m => m != this.client.user.id)
+        }
+        
         message.say(`Got it ${message.author}! Check your DMs for more setup details.`);
         message.author.createDM().then((dm) => {
             this.getOccurrenceSetting(dm)
@@ -38,7 +53,7 @@ module.exports = class NewCommand extends Command {
                                     this.getQuestions(dm)
                                         .then(questions => {
                                             newStandup.questions = questions;
-                                            console.log(newStandup);
+                                            dm.send("Okay! Your stand-up has been configured!  This can take up to 10 minutes to go into effect.");
                                         })
                                         .catch(console.error);
                                 })
