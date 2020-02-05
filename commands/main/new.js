@@ -28,6 +28,8 @@ module.exports = class NewCommand extends Command {
             members: []
         };
 
+        // We have custom logic to track optional role passed in 
+        // ,commando does not handle this nicely
         var roleID = role.match(/[0-9]+/g);
         if(roleID != undefined && roleID.length > 0){
             newStandup.members = message.guild.roles.get(roleID[0]).members
@@ -40,16 +42,25 @@ module.exports = class NewCommand extends Command {
         }
         
         message.say(`Got it ${message.author}! Check your DMs for more setup details.`);
+
+        //Create the DM to the user
         message.author.createDM().then((dm) => {
+            //Ask for how often to occur
             this.getOccurrenceSetting(dm)
                 .then(occurrence => {
                     newStandup.occurrence = occurrence;
+                    
+                    //Ask for when first should happen
                     this.getAskDatetime(dm)
                         .then(date => {
                             newStandup.first = date;
+
+                            //Ask about when to report first results
                             this.getReportDatetime(dm)
                                 .then(date => {
                                     newStandup.report = date;
+
+                                    //Build the questions list
                                     this.getQuestions(dm)
                                         .then(questions => {
                                             newStandup.questions = questions;
