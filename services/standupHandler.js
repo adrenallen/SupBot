@@ -2,11 +2,12 @@ const storage = require('node-persist');
 const moment = require ('moment');
 module.exports = class StandupHandler {
     constructor(){
+        this.storage = storage.create({dir: '.supdata/.standups'});
         this.initStorage();
     }
 
     async initStorage() {
-        await storage.init();
+        await this.storage.init();
         await this.refreshStandups();
     }
 
@@ -19,12 +20,12 @@ module.exports = class StandupHandler {
     }
 
     async refreshStandups(){
-        this.standups = (await storage.getItem('standups')) || [];
+        this.standups = (await this.storage.getItem('standups')) || [];
     }
 
     async saveNewStandup(standup){
         this.refreshStandups();
         this.standups.push(standup);
-        await storage.setItem('standups', this.standups);
+        await this.storage.setItem('standups', this.standups);
     }
 };
