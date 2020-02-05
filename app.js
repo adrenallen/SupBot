@@ -8,7 +8,7 @@ const client = new CommandoClient({
 });
 
 client.registry
-    // .registerDefaultTypes()
+    .registerDefaultTypes()
     .registerGroups([
         ['main', 'Main commands group']
     ])
