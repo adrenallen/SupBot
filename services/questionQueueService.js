@@ -11,7 +11,7 @@ module.exports = class QuestionQueueService {
         await this.refreshQuestions();
     }
 
-    getStandups(){
+    getQuestions(){
         return this.standups;
     }
 

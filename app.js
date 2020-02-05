@@ -51,4 +51,7 @@ setTimeout(handleDueStandups, 3000);
 function handleDueStandups(){
     var dueStandups = sh.findDueStandups();
     console.log(dueStandups);
+    dueStandups.forEach((standup) => {
+        console.log(standup);
+    });
 }
