@@ -1,0 +1,32 @@
+{
+  "name": "discord-standup",
+  "version": "1.0.0",
+  "description": "A discord stand-up bot",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adrenallen/discord-standup.git"
+  },
+  "keywords": [
+    "discord",
+    "stand",
+    "up",
+    "standup",
+    "stand-up",
+    "bot"
+  ],
+  "author": "Garrett Allen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adrenallen/discord-standup/issues"
+  },
+  "homepage": "https://github.com/adrenallen/discord-standup#readme",
+  "dependencies": {
+    "discord.js": "github:discordjs/discord.js",
+    "discord.js-commando": "github:discordjs/Commando",
+    "moment": "^2.24.0"
+  }
+}
