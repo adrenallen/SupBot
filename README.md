@@ -1,2 +1,2 @@
-# discord-standup
-A discord stand-up bot
+# SupBot 
+## A configurable stand-up bot for Discord
