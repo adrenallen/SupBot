@@ -3,6 +3,7 @@ const path = require('path');
 const config = require('./config.json')
 const StandupHandler = require('./services/standupHandler');
 const QuestionQueueService = require('./services/questionQueueService');
+const Question = require ('./objects/question');
 
 // Init the bot! 
 const client = new CommandoClient({
@@ -45,13 +46,33 @@ setInterval(
     config.standup_check_frequency
 );
 
-setTimeout(handleDueStandups, 3000);
+setTimeout(handleInitJobs, 3000);
+
+
+function handleInitJobs(){
+    handleDueStandups();
+    handleAskQuestions();
+}
 
 //TODO - put this in the standup handler and pass client to it
 function handleDueStandups(){
+    
     var dueStandups = sh.findDueStandups();
-    console.log(dueStandups);
+    //for each due standup
     dueStandups.forEach((standup) => {
-        console.log(standup);
+        //for each question in the standup
+        standup.questions.forEach(q => {
+            //for each member in the standup
+            standup.members.forEach(m => {
+                //add question to be asked
+                qqs.addNewQuestionToQueue(m, standup.guildID, new Question(standup.id, standup.guildID, q, false));
+            });
+        });
+        standup.initialized = true;
+        sh.updateStandupByID(standup);
     });
+}
+
+function handleAskQuestions(){
+    qqs.askPendingQuestions();
 }

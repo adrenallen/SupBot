@@ -1,8 +1,13 @@
 module.exports = class QuestionQueue {
-    constructor(memberID, guildID, questions = []){
+    constructor(memberID, questions = []){
         this.memberID = memberID;
-        this.guildID = guildID;
         this.questions = questions;
+    }
+
+    getPendingQuestion(){
+        var currentQuestion = this.questions[0];
+        if(currentQuestion == undefined || this.questions[0].asked) return null;
+        return this.questions[0];
     }
 
     //Can be one question or array of many questions

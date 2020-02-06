@@ -25,7 +25,7 @@ module.exports = class NewCommand extends Command {
     }
     
     run(message, { role }) {
-
+        console.log(message);
         //TODO - make this a class!
         var newStandup = {
             id: moment().unix(),

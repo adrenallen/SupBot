@@ -26,6 +26,16 @@ module.exports = class StandupHandler {
     async saveNewStandup(standup){
         this.refreshStandups();
         this.standups.push(standup);
+        this.saveCurrentStandups();
+    }
+
+    async updateStandupByID(standup){
+        var idx = this.standups.findIndex(s => s.id == standup.id);
+        this.standups[idx] = standup;
+        this.saveCurrentStandups();
+    }
+
+    async saveCurrentStandups(){
         await this.storage.setItem('standups', this.standups);
     }
 };
