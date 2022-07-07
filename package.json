@@ -27,7 +27,7 @@
   "dependencies": {
     "discord.js": "github:discordjs/discord.js",
     "discord.js-commando": "github:discordjs/Commando",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "node-persist": "^3.0.5"
   }
 }
